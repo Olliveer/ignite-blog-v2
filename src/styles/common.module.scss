@@ -1,0 +1,23 @@
+.containerAuthor {
+  display: flex;
+  align-items: flex-start;
+  margin: 1.5rem auto;
+
+  align-items: center;
+
+  time,
+  span {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--info);
+    line-height: 1.059rem;
+    margin-right: 1.5rem;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: var(--info);
+    margin-right: 0.5rem;
+  }
+}

@@ -1,0 +1,63 @@
+.contentContainer {
+  width: 700px;
+  height: 108px;
+
+  margin: 4rem auto 3rem;
+
+  section {
+    a {
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        color: var(--highlight);
+      }
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      color: var(--heading);
+      line-height: 2rem;
+    }
+
+    p {
+      font-weight: 400;
+      font-size: 1.125rem;
+      color: var(--body);
+      line-height: 1.361rem;
+    }
+
+    & + section {
+      margin-top: 3rem;
+    }
+  }
+
+  button {
+    border: 0;
+    background: transparent;
+    color: var(--highlight);
+    margin-top: 4rem;
+  }
+
+  .previewButton {
+    margin-top: 5.5rem;
+    width: 700px;
+    height: 58px;
+    border-radius: 4px;
+
+    text-align: center;
+    background: var(--heading);
+    color: var(--background);
+
+    font-weight: 600;
+    font-size: 1.125rem;
+
+    transition: filter 0.2s;
+
+    &:hover {
+      filter: brightness(0.8);
+    }
+  }
+}
