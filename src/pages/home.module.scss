@@ -32,32 +32,9 @@
     & + section {
       margin-top: 3rem;
     }
-  }
 
-  button {
-    border: 0;
-    background: transparent;
-    color: var(--highlight);
-    margin-top: 4rem;
-  }
-
-  .previewButton {
-    margin-top: 5.5rem;
-    width: 700px;
-    height: 58px;
-    border-radius: 4px;
-
-    text-align: center;
-    background: var(--heading);
-    color: var(--background);
-
-    font-weight: 600;
-    font-size: 1.125rem;
-
-    transition: filter 0.2s;
-
-    &:hover {
-      filter: brightness(0.8);
+    &:last-of-type {
+      margin-bottom: 4rem;
     }
   }
 }

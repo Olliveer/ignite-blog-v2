@@ -29,9 +29,13 @@ interface PostPagination {
 
 interface HomeProps {
   postsPagination: PostPagination;
+  preview: boolean;
 }
 
-export default function Home({ postsPagination }: HomeProps): JSX.Element {
+export default function Home({
+  postsPagination,
+  preview,
+}: HomeProps): JSX.Element {
   const [posts, setPosts] = useState(postsPagination.results);
   const [page, setPage] = useState(postsPagination.next_page);
 
@@ -66,29 +70,46 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
             <div className={commonStyles.containerAuthor}>
               <FiCalendar />
               <time>
-                {format(parseISO(post.first_publication_date), 'dd MMM yyyy', {
-                  locale: ptBR,
-                })}
+                {post.first_publication_date
+                  ? format(
+                      parseISO(post.first_publication_date),
+                      'dd MMM yyyy',
+                      {
+                        locale: ptBR,
+                      }
+                    )
+                  : 'Preview'}
               </time>
               <FiUser /> <span>{post.data.author}</span>
             </div>
           </section>
         ))}
         {page && (
-          <button onClick={loadPosts} type="button">
+          <button
+            className={commonStyles.highlightButton}
+            onClick={loadPosts}
+            type="button"
+          >
             Carregar mais posts
           </button>
         )}
 
-        <button type="button" className={styles.previewButton}>
-          Sair do modo preview
-        </button>
+        {preview && (
+          <Link href="/api/exit-preview">
+            <button type="button" className={commonStyles.previewButton}>
+              Sair do modo preview
+            </button>
+          </Link>
+        )}
       </main>
     </>
   );
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps<HomeProps> = async ({
+  preview = false,
+  previewData,
+}) => {
   const prismic = getPrismicClient();
 
   const postsResponse = await prismic.query(
@@ -96,6 +117,7 @@ export const getStaticProps: GetStaticProps = async () => {
     {
       fetch: [],
       pageSize: 1,
+      ref: previewData?.ref ?? null,
     }
   );
 
@@ -117,6 +139,7 @@ export const getStaticProps: GetStaticProps = async () => {
         next_page: postsResponse.next_page,
         results: posts,
       },
+      preview,
     },
   };
 };
