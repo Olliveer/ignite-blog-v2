@@ -10,9 +10,14 @@ function linkResolver(doc: Document): string {
   return '/';
 }
 
+type QueryProps = {
+  token: string;
+  documentId: string;
+};
+
 // eslint-disable-next-line consistent-return
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { token: ref, documentId } = req.query;
+  const { token: ref, documentId } = req.query as QueryProps;
 
   const redirectUrl = await getPrismicClient(req)
     .getPreviewResolver(ref, documentId)

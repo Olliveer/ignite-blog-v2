@@ -86,7 +86,7 @@ export default function Home({
         ))}
         {page && (
           <button
-            className={commonStyles.highlightButton}
+            className={styles.highlightButton}
             onClick={loadPosts}
             type="button"
           >

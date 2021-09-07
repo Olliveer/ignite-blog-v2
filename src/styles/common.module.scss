@@ -44,7 +44,10 @@
 }
 
 .highlightButton {
-  border: 0;
-  background: transparent;
+  margin-top: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.25rem;
   color: var(--highlight);
+  text-decoration: none;
 }

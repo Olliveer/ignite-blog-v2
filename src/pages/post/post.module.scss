@@ -27,9 +27,13 @@
     }
   }
 
-  footer {
-    border-top: 1px solid var(--body);
+  .divider {
+    border: 1px solid var(--info);
+    filter: opacity(0.1);
+    margin: 3.75rem 0 3rem 0;
+  }
 
+  footer {
     header {
       margin-top: 3rem;
       margin-bottom: 5rem;

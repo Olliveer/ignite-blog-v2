@@ -1,5 +1,5 @@
 import Prismic from '@prismicio/client';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
@@ -33,12 +33,26 @@ interface Post {
   };
 }
 
+type pageInfo = {
+  uid: string;
+  data: {
+    title: string;
+  };
+};
+
 interface PostProps {
   post: Post;
   preview: boolean;
+  nextPage: pageInfo;
+  previousPage: pageInfo;
 }
 
-export default function Post({ post, preview }: PostProps): JSX.Element {
+export default function Post({
+  post,
+  preview,
+  nextPage,
+  previousPage,
+}: PostProps): JSX.Element {
   const router = useRouter();
 
   if (router.isFallback) {
@@ -50,22 +64,6 @@ export default function Post({ post, preview }: PostProps): JSX.Element {
 
     return total + bodyWords;
   }, 0);
-
-  const updatedPostDate = format(
-    new Date(post.last_publication_date),
-    'dd MMM yyyy',
-    {
-      locale: ptBR,
-    }
-  );
-
-  const updatedPostTime = format(
-    new Date(post.last_publication_date),
-    'HH:mm',
-    {
-      locale: ptBR,
-    }
-  );
 
   return (
     <>
@@ -79,7 +77,7 @@ export default function Post({ post, preview }: PostProps): JSX.Element {
             <FiCalendar />
             <time>
               {post.first_publication_date
-                ? format(parseISO(post.first_publication_date), 'dd MMM yyyy', {
+                ? format(new Date(post.first_publication_date), 'dd MMM yyyy', {
                     locale: ptBR,
                   })
                 : 'Preview'}
@@ -92,7 +90,15 @@ export default function Post({ post, preview }: PostProps): JSX.Element {
           {post.last_publication_date && (
             <div className={styles.isUpdated}>
               <span>
-                {`* editado em ${updatedPostDate}, às ${updatedPostTime}`}
+                {`* editado em ${format(
+                  new Date(post.last_publication_date),
+                  'dd MMM yyyy',
+                  {
+                    locale: ptBR,
+                  }
+                )}, às ${format(new Date(post.last_publication_date), 'HH:MM', {
+                  locale: ptBR,
+                })}`}
               </span>
             </div>
           )}
@@ -109,27 +115,35 @@ export default function Post({ post, preview }: PostProps): JSX.Element {
             </article>
           ))}
 
+          <div className={styles.divider} />
+
           <footer>
             <header>
               <div>
-                <span>
-                  Post anterior
-                  <button
-                    className={commonStyles.highlightButton}
-                    type="button"
-                  >
-                    Post anterior
-                  </button>
-                </span>
-                <span>
-                  Próximo post
-                  <button
-                    className={commonStyles.highlightButton}
-                    type="button"
-                  >
-                    Próximo post
-                  </button>
-                </span>
+                {previousPage ? (
+                  <span>
+                    {previousPage.data.title}
+                    <Link href={`/post/${previousPage.uid}`}>
+                      <a className={commonStyles.highlightButton} type="button">
+                        Post anterior
+                      </a>
+                    </Link>
+                  </span>
+                ) : (
+                  <span />
+                )}
+                {nextPage ? (
+                  <span>
+                    {nextPage?.data.title}
+                    <Link href={`/post/${nextPage.uid}`}>
+                      <a className={commonStyles.highlightButton} type="button">
+                        Próximo post
+                      </a>
+                    </Link>
+                  </span>
+                ) : (
+                  <span />
+                )}
               </div>
             </header>
             <Comments />
@@ -162,7 +176,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths: allPosts,
-    fallback: false,
+    fallback: true,
   };
 };
 
@@ -178,10 +192,26 @@ export const getStaticProps: GetStaticProps = async ({
     ref: previewData?.ref || null,
   });
 
+  const prevpost = (
+    await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
+      pageSize: 1,
+      after: `${response?.id}`,
+      orderings: '[document.last_publication_date]',
+    })
+  ).results[0];
+
+  const nextpost = (
+    await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
+      pageSize: 1,
+      after: `${response?.id}`,
+      orderings: '[document.last_publication_date desc]',
+    })
+  ).results[0];
+
   const post = {
-    first_publication_date: response.first_publication_date,
-    last_publication_date: response.last_publication_date,
-    uid: response.uid,
+    first_publication_date: response?.first_publication_date,
+    last_publication_date: response?.last_publication_date,
+    uid: response?.uid,
     data: {
       title: response.data.title,
       subtitle: response.data.subtitle,
@@ -202,6 +232,8 @@ export const getStaticProps: GetStaticProps = async ({
     props: {
       post,
       preview,
+      nextPage: nextpost || null,
+      previousPage: prevpost || null,
     },
     revalidate: 60 * 60 * 24, // 24 hours
   };

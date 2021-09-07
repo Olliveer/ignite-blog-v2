@@ -37,4 +37,10 @@
       margin-bottom: 4rem;
     }
   }
+
+  .highlightButton {
+    border: 0;
+    background: transparent;
+    color: var(--highlight);
+  }
 }
