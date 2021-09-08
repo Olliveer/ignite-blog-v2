@@ -196,7 +196,7 @@ export const getStaticProps: GetStaticProps = async ({
     await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
       pageSize: 1,
       after: `${response?.id}`,
-      orderings: '[document.last_publication_date]',
+      orderings: '[document.last_publication_date desc]',
     })
   ).results[0];
 
@@ -204,11 +204,11 @@ export const getStaticProps: GetStaticProps = async ({
     await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
       pageSize: 1,
       after: `${response?.id}`,
-      orderings: '[document.last_publication_date desc]',
+      orderings: '[document.last_publication_date]',
     })
   ).results[0];
 
-  const post = {
+  const post: Post = {
     first_publication_date: response?.first_publication_date,
     last_publication_date: response?.last_publication_date,
     uid: response?.uid,
@@ -222,7 +222,7 @@ export const getStaticProps: GetStaticProps = async ({
       content: response.data.content.map(item => {
         return {
           heading: item.heading,
-          body: item.body,
+          body: [...item.body],
         };
       }),
     },
@@ -232,8 +232,8 @@ export const getStaticProps: GetStaticProps = async ({
     props: {
       post,
       preview,
-      nextPage: nextpost || null,
-      previousPage: prevpost || null,
+      nextPage: prevpost || null,
+      previousPage: nextpost || null,
     },
     revalidate: 60 * 60 * 24, // 24 hours
   };
