@@ -1,9 +1,11 @@
-import { NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export default async (_, res: NextApiResponse) => {
+export default async function exitPreview(
+  _: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
   res.clearPreviewData();
 
   res.writeHead(307, { Location: '/' });
-  res.end();
-};
+  return res.end();
+}

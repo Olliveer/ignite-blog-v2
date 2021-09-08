@@ -1,4 +1,5 @@
 import Prismic from '@prismicio/client';
+import Head from 'next/head';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { GetStaticPaths, GetStaticProps } from 'next';
@@ -67,6 +68,9 @@ export default function Post({
 
   return (
     <>
+      <Head>
+        <title>{post.data.title} | spacetraveling</title>
+      </Head>
       <Header />
 
       <main className={styles.postContainer}>

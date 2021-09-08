@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { Document } from '@prismicio/client/types/documents';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getPrismicClient } from '../../services/prismic';
@@ -15,8 +14,10 @@ type QueryProps = {
   documentId: string;
 };
 
-// eslint-disable-next-line consistent-return
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function preview(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
   const { token: ref, documentId } = req.query as QueryProps;
 
   const redirectUrl = await getPrismicClient(req)
@@ -37,5 +38,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     <script>window.location.href = '${redirectUrl}'</script>
     </head>`
   );
-  res.end();
-};
+  return res.end();
+}
